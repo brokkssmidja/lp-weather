@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b3d5c"><title>Lake Placid Weather</title>
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+body{margin:0;font-family:system-ui,sans-serif;background:#0b3d5c;color:#fff;text-align:center}
+main{max-width:480px;margin:auto;padding:16px}h1{font-size:1.1rem;font-weight:500;opacity:.85;margin:8px 0}
+#temp{font-size:5.5rem;font-weight:700;line-height:1}#feels{opacity:.85;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left}
+.c{background:#ffffff1a;border-radius:12px;padding:10px}.c b{display:block;font-size:.75rem;opacity:.7;font-weight:400}.c span{font-size:1.15rem}
+button{margin:14px 0;font-size:1rem;padding:10px 24px;border:0;border-radius:24px;background:#fff;color:#0b3d5c}
+a{color:#9fd3ff}#time,#err{font-size:.85rem;opacity:.8}#err{color:#ffb4b4}
+h2{font-size:1rem;font-weight:600;margin:20px 0 8px;text-align:left;opacity:.9}
+.days{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.day{background:#ffffff1a;border-radius:12px;padding:10px 6px;font-size:.8rem}
+.day .n{font-weight:600;font-size:.9rem}.day .i{font-size:2.2rem;margin:4px 0}
+.day .hl{font-size:1.05rem}.day .hl .lo{opacity:.65}.day .pp{color:#9fd3ff}.day .t{opacity:.85;margin-top:4px;line-height:1.25}
+.chart{margin-top:8px}.chart svg{width:100%;height:auto;display:block}
+#ferr{color:#ffb4b4;font-size:.85rem}#ftime{font-size:.75rem;opacity:.7;margin-top:6px}
+</style></head><body><main>
+<h1>Lake Placid (Uihlein Farm) · NYS Mesonet</h1>
+<div id="temp">--°</div><div id="feels">&nbsp;</div>
+<div class="grid">
+<div class="c"><b>Wind</b><span id="wind">--</span></div><div class="c"><b>Humidity</b><span id="rh">--</span></div>
+<div class="c"><b>Dewpoint</b><span id="dew">--</span></div><div class="c"><b>Pressure (station / sea level)</b><span id="pres">--</span></div>
+<div class="c"><b>Precip 6h / 1d</b><span id="p1">--</span></div><div class="c"><b>Precip 3d / 7d</b><span id="p2">--</span></div>
+<div class="c"><b>Snow depth</b><span id="snow">--</span></div><div class="c"><b>Elevation</b><span id="elev">--</span></div>
+</div>
+<h2>Forecast · NWS</h2><div id="days" class="days"></div>
+<div class="c chart"><b>Next 72 hours · temp (°F) &amp; precip chance</b><div id="chart"></div></div>
+<div id="ferr"></div><div id="ftime"></div>
+<button id="refresh">↻ Refresh</button>
+<div id="time"></div><div id="err"></div>
+<p><a href="https://www.nysmesonet.org/weather/local#network=nysm&stid=lkpl" target="_blank" rel="noopener">Full Mesonet page →</a></p>
+</main><script src="app.js"></script><script src="forecast.js"></script></body></html>
