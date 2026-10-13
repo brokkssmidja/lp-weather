@@ -17,7 +17,7 @@ async function load(){
     const j=await res.json();const f=j.features.find(x=>x.properties.STID==='LKPL');if(!f)throw new Error('Station not found');
     window.LKPL={lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0]};
     const p=f.properties,tf=F(p.TAIR),mph=MPH(p.WSPD||0);
-    $('temp').textContent=r(tf)+'°F';
+    $('temp').textContent=r(tf)+'°F';$('tempc').textContent=r(p.TAIR)+'°C';
     const fl=feelsF(tf,p.RELH,mph);$('feels').textContent=Math.round(fl)!==Math.round(tf)?'Feels like '+r(fl)+'°F':'\u00a0';
     $('wind').textContent=`${card(p.WDIR)} ${r(mph)} mph, gust ${r(MPH(p.WMAX))}`;
     $('rh').textContent=r(p.RELH)+'%';
