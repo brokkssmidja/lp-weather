@@ -10,6 +10,22 @@ function feelsF(tf,rh,mph){
   if(tf>=80)return -42.379+2.04901523*tf+10.14333127*rh-.22475541*tf*rh-.00683783*tf*tf-.05481717*rh*rh+.00122874*tf*tf*rh+.00085282*tf*rh*rh-.00000199*tf*tf*rh*rh;
   return tf;}
 function slp(p,elev,tc){return p*Math.pow(1-0.0065*elev/(tc+0.0065*elev+273.15),-5.257);}
+const ok=v=>v!=null&&v!==''&&!isNaN(v);
+const FC=c=>ok(c)?`${r(F(+c))}°F / ${r(c,1)}°C`:'--';
+const DFC=d=>ok(d)?`${d*9/5>=0?'+':''}${r(d*9/5,1)}°F / ${d>=0?'+':''}${r(d,1)}°C`:'--';
+function sky(w){return w<5?'Dark':w<200?'Overcast':w<600?'Partly sunny':'Sunny';}
+function groundSky(p,tf,mph){
+  for(const d of ['05','25','50']){
+    $('ts'+d).textContent=FC(p['TS'+d]);
+    const z=p['FZ'+d];$('fz'+d).textContent=ok(z)?(+z===1?'Frozen':'Not frozen'):'--';
+    $('sm'+d).textContent=ok(p['SM'+d])?r(p['SM'+d]*100)+'%':'--';}
+  $('srad').textContent=ok(p.SRAD)?`${r(p.SRAD)} W/m² · ${sky(+p.SRAD)}`:'--';
+  const dc=ok(p.TAIR)&&ok(p.RELH)&&p.RELH>0?dewC(+p.TAIR,+p.RELH):null;$('gdew').textContent=FC(dc);
+  let show=false;if(ok(p.TAIR)&&ok(p.RELH)&&ok(p.WSPD)){const fl=feelsF(tf,+p.RELH,mph);
+    if(Math.abs(fl-tf)>=2){show=true;$('gfeels').textContent=`${r(fl)}°F / ${r((fl-32)*5/9,1)}°C`;}}
+  $('gfeelsc').hidden=!show;
+  const dd=ok(p.TA9M)&&ok(p.TAIR)?p.TA9M-p.TAIR:null;$('inv').textContent=DFC(dd);
+  $('invn').textContent=dd!=null&&dd>1?'Warmer air above, frost risk in low spots':'';}
 async function load(){
   $('err').textContent='';$('time').textContent='Loading…';
   try{
@@ -27,6 +43,7 @@ async function load(){
     $('p2').textContent=`${r(IN(p.PRECIP3D),2)} / ${r(IN(p.PRECIP7D),2)} in`;
     $('snow').textContent=p.SNOW_DEPTH==null?'n/a':r(p.SNOW_DEPTH/2.54,1)+' in';
     $('elev').textContent=r(p.ELEV*3.28084)+' ft';
+    groundSky(p,tf,mph);
     $('time').textContent='Observed '+new Date(p.TIME).toLocaleString('en-US',{timeZone:'America/New_York',weekday:'short',hour:'numeric',minute:'2-digit',month:'short',day:'numeric'})+' ET';
   }catch(e){$('err').textContent='Could not load: '+e.message;$('time').textContent='';}
 }
