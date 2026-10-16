@@ -36,9 +36,9 @@ function chart(hr){
  const x=i=>L+i*(W-L-R)/(n-1),y=t=>T+(mx-t)*(H-T-B)/(mx-mn),bw=(W-L-R)/n;let s='';
  for(let t=Math.ceil(mn/5)*5;t<=mx;t+=5)s+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="#ffffff22"/><text x="${L-4}" y="${y(t)+3}" fill="#ffffffaa" font-size="9" text-anchor="end">${t}</text>`;
  const cl=hr.map((h,i)=>h.sky==null?null:`${x(i).toFixed(1)},${(H-B-h.sky/100*(H-T-B)).toFixed(1)}`);
- if(cl.some(v=>v)){let seg=[];const flush=()=>{if(seg.length>1){const i0=seg[0],i1=seg[seg.length-1];s+=`<polygon points="${x(i0)},${H-B} ${seg.map(i=>cl[i]).join(' ')} ${x(i1)},${H-B}" fill="#c8d0d84d"/><polyline points="${seg.map(i=>cl[i]).join(' ')}" fill="none" stroke="#d6dde4" stroke-width="1.2" stroke-opacity=".8"/>`;}seg=[];};
+ if(cl.some(v=>v)){let seg=[];const flush=()=>{if(seg.length>1){const i0=seg[0],i1=seg[seg.length-1];s+=`<polygon points="${x(i0)},${H-B} ${seg.map(i=>cl[i]).join(' ')} ${x(i1)},${H-B}" fill="rgba(160,140,200,0.25)"/><polyline points="${seg.map(i=>cl[i]).join(' ')}" fill="none" stroke="#8f78d0" stroke-width="1.5" stroke-dasharray="4 3"/>`;}seg=[];};
   cl.forEach((v,i)=>v?seg.push(i):flush());flush();}
- hr.forEach((h,i)=>{const p=h.probabilityOfPrecipitation?.value||0;if(p)s+=`<rect x="${x(i)-bw/2}" y="${H-B-p/100*(H-T-B)}" width="${bw}" height="${p/100*(H-T-B)}" fill="#4fa8ff55"/>`;
+ hr.forEach((h,i)=>{const p=h.probabilityOfPrecipitation?.value||0;if(p)s+=`<rect x="${x(i)-bw/2}" y="${H-B-p/100*(H-T-B)}" width="${bw}" height="${p/100*(H-T-B)}" fill="#2b7bd6"/>`;
   const d=new Date(h.startTime),hh=+d.toLocaleString('en-US',{timeZone:'America/New_York',hour:'numeric',hour12:false})%24;
   if(hh===0){s+=`<line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${H-B}" stroke="#ffffff55" stroke-dasharray="2 3"/><text x="${x(i)+3}" y="${H-B+12}" fill="#fff" font-size="${n>96?9:10}">${d.toLocaleString('en-US',{timeZone:'America/New_York',weekday:'short'})}</text>`;}
   else if(hh===12&&n<=96||hh%6===0&&n<=72)s+=`<text x="${x(i)}" y="${H-B+22}" fill="#ffffff88" font-size="8" text-anchor="middle">${hh%12||12}${hh<12?'a':'p'}</text>`;});
@@ -48,7 +48,7 @@ function chart(hr){
  const iM=ts.indexOf(Math.max(...ts)),im=ts.indexOf(Math.min(...ts));
  [[iM,-6],[im,13]].forEach(([i,dy])=>s+=`<text x="${x(i)}" y="${y(ts[i])+dy}" fill="#ffd166" font-size="10" font-weight="700" text-anchor="middle">${ts[i]}°</text>`);
  return`<svg viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd16655"/><stop offset="1" stop-color="#ffd16600"/></linearGradient></defs>${s}</svg>`;}
-function render(fc,stale){$('days').innerHTML=days(fc.daily);$('chart').innerHTML=chart(fc.hourly)+`<div class="lg"><span><i style="background:#ffd166"></i>Temp °F</span><span><i style="background:#4fa8ff"></i>Rain %</span>${fc.hasSky?'<span><i style="background:#c8d0d8"></i>Cloud %</span>':''}</div>`;
+function render(fc,stale){$('days').innerHTML=days(fc.daily);$('chart').innerHTML=chart(fc.hourly)+`<div class="lg"><span><i class="tp"></i>Temp °F</span><span><i class="rn"></i>Rain %</span>${fc.hasSky?'<span><i class="cd"></i>Cloud %</span>':''}</div>`;
  $('ftime').textContent='Forecast updated '+new Date(fc.at).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})+' ET'+(stale?' (saved copy)':'');}
 let busy=false;
 window.loadForecast=async function(force){
