@@ -16,14 +16,14 @@ h2{font-size:1rem;font-weight:600;margin:20px 0 8px;text-align:left;opacity:.9}
 .day .dn{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}.day .pt{background:#ffffff0d;border-radius:8px;padding:6px 4px}.day .pl{font-size:.72rem;opacity:.75}
 .day .n{font-weight:600;font-size:.9rem}.day .i{font-size:2.2rem;margin:4px 0}
 .day .hl{font-size:1.05rem}.day .hl.lo{opacity:.7}.day .pp{color:#9fd3ff}.day .t{opacity:.85;margin-top:4px;line-height:1.25}
-.chart{margin:8px 0}.chart svg{width:100%;height:auto;display:block}
+.chart{margin:8px 0}.lg{display:flex;gap:12px;justify-content:center;font-size:.72rem;opacity:.85;margin-top:4px}.c .lg span{font-size:.72rem}.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}.chart svg{width:100%;height:auto;display:block}
 .gs .c i{display:block;font-style:normal;font-size:.8rem;opacity:.8;margin-top:2px}.gs .c i:empty{display:none}
 #ferr{color:#ffb4b4;font-size:.85rem}#ftime{font-size:.75rem;opacity:.7;margin-top:6px}
 </style></head><body><main>
 <h1>Lake Placid (Uihlein Farm) · NYS Mesonet</h1>
 <div id="temp">--°</div><div id="tempc">--°C</div><div id="feels">&nbsp;</div>
 <h2>7-day forecast · NWS</h2>
-<div class="c chart"><b>Next 7 days · temp (°F) &amp; precip chance</b><div id="chart"></div></div>
+<div class="c chart"><b>Next 7 days · temp, rain &amp; cloud cover</b><div id="chart"></div></div>
 <div id="days" class="days"></div>
 <div id="ferr"></div><div id="ftime"></div>
 <h2>Current conditions</h2>
@@ -44,4 +44,4 @@ h2{font-size:1rem;font-weight:600;margin:20px 0 8px;text-align:left;opacity:.9}
 <button id="refresh">↻ Refresh</button>
 <div id="time"></div><div id="err"></div>
 <p><a href="https://www.nysmesonet.org/weather/local#network=nysm&stid=lkpl" target="_blank" rel="noopener">Full Mesonet page →</a></p>
-</main><script src="app.js?v=7"></script><script src="forecast.js?v=7"></script></body></html>
+</main><script src="app.js?v=8"></script><script src="forecast.js?v=8"></script></body></html>
