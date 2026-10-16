@@ -16,21 +16,23 @@ h2{font-size:1rem;font-weight:600;margin:20px 0 8px;text-align:left;opacity:.9}
 .day .dn{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}.day .pt{background:#ffffff0d;border-radius:8px;padding:6px 4px}.day .pl{font-size:.72rem;opacity:.75}
 .day .n{font-weight:600;font-size:.9rem}.day .i{font-size:2.2rem;margin:4px 0}
 .day .hl{font-size:1.05rem}.day .hl.lo{opacity:.7}.day .pp{color:#9fd3ff}.day .t{opacity:.85;margin-top:4px;line-height:1.25}
-.chart{margin-top:8px}.chart svg{width:100%;height:auto;display:block}
+.chart{margin:8px 0}.chart svg{width:100%;height:auto;display:block}
 .gs .c i{display:block;font-style:normal;font-size:.8rem;opacity:.8;margin-top:2px}.gs .c i:empty{display:none}
 #ferr{color:#ffb4b4;font-size:.85rem}#ftime{font-size:.75rem;opacity:.7;margin-top:6px}
 </style></head><body><main>
 <h1>Lake Placid (Uihlein Farm) · NYS Mesonet</h1>
 <div id="temp">--°</div><div id="tempc">--°C</div><div id="feels">&nbsp;</div>
+<h2>7-day forecast · NWS</h2>
+<div class="c chart"><b>Next 7 days · temp (°F) &amp; precip chance</b><div id="chart"></div></div>
+<div id="days" class="days"></div>
+<div id="ferr"></div><div id="ftime"></div>
+<h2>Current conditions</h2>
 <div class="grid">
 <div class="c"><b>Wind</b><span id="wind">--</span></div><div class="c"><b>Humidity</b><span id="rh">--</span></div>
 <div class="c"><b>Dewpoint</b><span id="dew">--</span></div><div class="c"><b>Pressure (station / sea level)</b><span id="pres">--</span></div>
 <div class="c"><b>Precip 6h / 1d</b><span id="p1">--</span></div><div class="c"><b>Precip 3d / 7d</b><span id="p2">--</span></div>
 <div class="c"><b>Snow depth</b><span id="snow">--</span></div><div class="c"><b>Elevation</b><span id="elev">--</span></div>
 </div>
-<h2>7-day forecast · NWS</h2><div id="days" class="days"></div>
-<div class="c chart"><b>Next 7 days · temp (°F) &amp; precip chance</b><div id="chart"></div></div>
-<div id="ferr"></div><div id="ftime"></div>
 <h2>Ground &amp; sky</h2>
 <div class="grid gs">
 <div class="c"><b>Soil temp 2 in</b><span id="ts05">--</span><i id="fz05">--</i></div><div class="c"><b>Soil moisture 2 in</b><span id="sm05">--</span></div>
@@ -42,4 +44,4 @@ h2{font-size:1rem;font-weight:600;margin:20px 0 8px;text-align:left;opacity:.9}
 <button id="refresh">↻ Refresh</button>
 <div id="time"></div><div id="err"></div>
 <p><a href="https://www.nysmesonet.org/weather/local#network=nysm&stid=lkpl" target="_blank" rel="noopener">Full Mesonet page →</a></p>
-</main><script src="app.js?v=6"></script><script src="forecast.js?v=6"></script></body></html>
+</main><script src="app.js?v=7"></script><script src="forecast.js?v=7"></script></body></html>
