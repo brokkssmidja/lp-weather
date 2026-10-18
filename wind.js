@@ -8,6 +8,7 @@ const BANDS=[{lo:30,hi:45,name:'Watch',lbl:'30–45 mph · 13–20 m/s',fill:'rg
  {lo:58,hi:1e4,name:'Warning',lbl:'58+ mph · 26+ m/s',fill:'rgba(255,90,90,0.15)',c:'#ff6b6b'}];
 const gcol=g=>g>=58?'#ff6b6b':g>=45?'#ff9f43':g>=30?'#ffd166':'#f78fb3';
 // pts: [{t:ms, s:mph|null, g:mph|null, d:deg-from|null}]
+const pill=(x,y,t,fill,fs,anc,fw)=>{const w=String(t).length*fs*0.6+6,h=fs+4,x0=anc==='end'?x-w+3:anc==='start'?x-3:x-w/2;return`<rect x="${x0.toFixed(1)}" y="${(y-fs*0.82-2).toFixed(1)}" width="${w.toFixed(1)}" height="${h}" rx="3.5" fill="#0b3d5c" fill-opacity=".88"/><text x="${x}" y="${y}" fill="${fill}" font-size="${fs}" font-weight="${fw||700}" text-anchor="${anc||'middle'}">${t}</text>`;};
 window.windChart=function(pts,o){
  o=o||{};const W=400,H=170,L=26,R=24,T=18,B=26,n=pts.length;
  if(n<2||!pts.some(p=>ok(p.s)||ok(p.g)))return'<div class="nod">No wind data available</div>';
@@ -36,7 +37,7 @@ window.windChart=function(pts,o){
  if(o.peak){let pk=null;pts.forEach(p=>{if(ok(p.g)&&(!pk||p.g>pk.g))pk=p;});
   if(pk){const px=x(pk.t),py=y(pk.g),tm=new Date(pk.t).toLocaleString('en-US',{...tz,weekday:'short',hour:'numeric',minute:'2-digit'});
    const anc=px>W*0.7?'end':px<W*0.3?'start':'middle';
-   s+=`<circle cx="${px}" cy="${py}" r="3.5" fill="none" stroke="${gcol(pk.g)}" stroke-width="1.5"/><text x="${px}" y="${Math.max(py-6,T+8)}" fill="${gcol(pk.g)}" font-size="9.5" font-weight="700" text-anchor="${anc}" stroke="#0b3d5c" stroke-width="2.5" paint-order="stroke">Peak ${Math.round(pk.g)} mph (${Math.round(pk.g*0.44704)} m/s) · ${tm}</text>`;}}
+   s+=`<circle cx="${px}" cy="${py}" r="3.5" fill="none" stroke="${gcol(pk.g)}" stroke-width="1.5"/>`+pill(px,Math.max(py-6,T+8),`Peak ${Math.round(pk.g)} mph (${Math.round(pk.g*0.44704)} m/s) · ${tm}`,gcol(pk.g),9.5,anc);}}
  return`<svg viewBox="0 0 ${W} ${H}">${s}</svg><div class="lg"><span><i class="ws"></i>Speed</span><span><i class="wg"></i>Gust</span><span><i class="bw"></i>Watch 30+</span><span><i class="ba"></i>Advisory 45+</span><span><i class="bx"></i>Warning 58+</span><span>➤ Direction</span></div>`;};
 
 // ---- Measured wind (NYS Mesonet timeseries2, 5-min) ----

@@ -33,6 +33,7 @@ function days(per){
  return out.map((o,k)=>{const m=o.day||o.night,d=new Date(m.startTime);
   const name=k===0?'Today':d.toLocaleString('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric'});
   return`<div class="day"><div class="n">${esc(name)}</div><div class="dn">${part(o.day,'Day')}${part(o.night,'Night')}</div></div>`;}).join('');}
+const pill=(x,y,t,fill,fs,anc,fw)=>{const w=String(t).length*fs*0.6+6,h=fs+4,x0=anc==='end'?x-w+3:anc==='start'?x-3:x-w/2;return`<rect x="${x0.toFixed(1)}" y="${(y-fs*0.82-2).toFixed(1)}" width="${w.toFixed(1)}" height="${h}" rx="3.5" fill="#0b3d5c" fill-opacity=".88"/><text x="${x}" y="${y}" fill="${fill}" font-size="${fs}" font-weight="${fw||700}" text-anchor="${anc||'middle'}">${t}</text>`;};
 function chart(hr){
  const W=400,H=180,L=26,R=24,T=12,B=26,n=hr.length;if(!n)return'';
  const ts=hr.map(h=>h.temperature),mn=Math.min(Math.floor(Math.min(...ts)/5)*5-2,28),mx=Math.max(Math.ceil(Math.max(...ts)/5)*5+2,36);
@@ -47,7 +48,7 @@ function chart(hr){
   if(hh===0){s+=`<line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${H-B}" stroke="#ffffff55" stroke-dasharray="2 3"/><text x="${x(i)+3}" y="${H-B+12}" fill="#fff" font-size="${n>96?9:10}">${d.toLocaleString('en-US',{timeZone:'America/New_York',weekday:'short'})}</text>`;}
   else if(hh===12&&n<=96||hh%6===0&&n<=72)s+=`<text x="${x(i)}" y="${H-B+22}" fill="#ffffff88" font-size="8" text-anchor="middle">${hh%12||12}${hh<12?'a':'p'}</text>`;});
  [0,50,100].forEach(p=>s+=`<text x="${W-R+3}" y="${H-B-p/100*(H-T-B)+3}" fill="#ffffff88" font-size="8">${p}%</text>`);
- s+=`<line x1="${L}" x2="${W-R}" y1="${y(32)}" y2="${y(32)}" stroke="#7fd8ff" stroke-width="1.2" stroke-dasharray="6 3"/><text x="${L+3}" y="${y(32)+10}" fill="#7fd8ff" font-size="9" font-weight="600" stroke="#0b3d5c" stroke-width="2.5" paint-order="stroke">32°F</text>`;
+ s+=`<line x1="${L}" x2="${W-R}" y1="${y(32)}" y2="${y(32)}" stroke="#7fd8ff" stroke-width="1.2" stroke-dasharray="6 3"/>`+pill(L+4,y(32)+11,'32°F','#7fd8ff',9,'start');
  const pts=hr.map((h,i)=>`${x(i).toFixed(1)},${y(h.temperature).toFixed(1)}`).join(' ');
  s+=`<polygon points="${x(0)},${H-B} ${pts} ${x(n-1)},${H-B}" fill="url(#g)"/><polyline points="${pts}" fill="none" stroke="#ffd166" stroke-width="2.2" stroke-linejoin="round"/>`;
  const iM=ts.indexOf(Math.max(...ts)),im=ts.indexOf(Math.min(...ts));
