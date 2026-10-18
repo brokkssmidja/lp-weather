@@ -53,7 +53,7 @@ function chart(hr){
  const iM=ts.indexOf(Math.max(...ts)),im=ts.indexOf(Math.min(...ts));
  [[iM,-6],[im,13]].forEach(([i,dy])=>s+=`<text x="${x(i)}" y="${y(ts[i])+dy}" fill="#ffd166" font-size="10" font-weight="700" text-anchor="middle">${ts[i]}°</text>`);
  return`<svg viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd16655"/><stop offset="1" stop-color="#ffd16600"/></linearGradient></defs>${s}</svg>`;}
-function render(fc,stale){window.renderNext12&&renderNext12(fc.hourly);window.renderWindFc&&renderWindFc(fc.hourly);$('days').innerHTML=days(fc.daily);$('chart').innerHTML=chart(fc.hourly)+`<div class="lg"><span><i class="tp"></i>Temp °F</span><span><i class="fz"></i>Freezing</span><span><i class="rn"></i>Rain %</span>${fc.hasSky?'<span><i class="cd"></i>Cloud %</span>':''}</div>`;
+function render(fc,stale){try{window.renderSummary&&renderSummary(fc);}catch(e){}window.renderNext12&&renderNext12(fc.hourly);window.renderWindFc&&renderWindFc(fc.hourly);$('days').innerHTML=days(fc.daily);$('chart').innerHTML=chart(fc.hourly)+`<div class="lg"><span><i class="tp"></i>Temp °F</span><span><i class="fz"></i>Freezing</span><span><i class="rn"></i>Rain %</span>${fc.hasSky?'<span><i class="cd"></i>Cloud %</span>':''}</div>`;
  $('ftime').textContent='Forecast updated '+new Date(fc.at).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})+' ET'+(stale?' (saved copy)':'');}
 let busy=false;
 window.loadForecast=async function(force){
