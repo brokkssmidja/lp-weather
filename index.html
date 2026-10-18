@@ -18,10 +18,16 @@ h2{font-size:1rem;font-weight:600;margin:20px 0 8px;text-align:left;opacity:.9}
 .day .hl{font-size:1.05rem}.day .hl.lo{opacity:.7}.day .pp{color:#9fd3ff}.day .t{opacity:.85;margin-top:4px;line-height:1.25}
 .chart{margin:8px 0}.lg{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:.72rem;opacity:.85;margin-top:4px}.c .lg span{font-size:.72rem}.lg i{display:inline-block;margin-right:4px;vertical-align:middle;box-sizing:border-box}.lg .tp{width:14px;height:3px;background:#ffd166;border-radius:2px}.lg .ws{width:14px;height:3px;background:#6ee7b7;border-radius:2px}.lg .wg{width:14px;height:0;border-top:2px dotted #f78fb3}.lg .wg{width:16px;height:3px;border:0;background:linear-gradient(90deg,#f78fb3 0 25%,#ffd166 25% 50%,#ff9f43 50% 75%,#ff6b6b 75%)}.lg .bw,.lg .ba,.lg .bx{width:12px;height:10px;border-radius:2px}.lg .bw{background:rgba(255,214,102,.35)}.lg .ba{background:rgba(255,159,67,.45)}.lg .bx{background:rgba(255,90,90,.5)}.wb{display:inline-block;margin:0 auto 12px;padding:6px 12px;border-radius:14px;font-weight:600;font-size:.9rem}.wb.orange{background:#ff9f4333;color:#ffb366;border:1px solid #ff9f43}.wb.red{background:#ff5a5a33;color:#ff8a8a;border:1px solid #ff6b6b}.wb.yellow{background:#ffd16626;color:#ffd166;border:1px solid #ffd16699}.wb.small{font-size:.78rem;padding:4px 10px;font-weight:500}.nod{opacity:.7;font-size:.85rem;padding:20px 0}.werr{color:#ffb4b4;font-size:.8rem}.lg .fz{width:16px;height:10px;background:rgba(127,216,255,0.12);border-top:2px dashed #7fd8ff}.lg .rn{width:6px;height:12px;background:#2b7bd6}.lg .cd{width:16px;height:10px;background:rgba(160,140,200,0.25);border-top:2px dashed #8f78d0}.chart svg{width:100%;height:auto;display:block}
 .gs .c i{display:block;font-style:normal;font-size:.8rem;opacity:.8;margin-top:2px}.gs .c i:empty{display:none}
+.n12hd{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}.n12hd h2{margin-bottom:8px}
+.tg{display:flex;margin-bottom:6px;border:1px solid #ffffff44;border-radius:14px;overflow:hidden}.tg button{margin:0;padding:3px 10px;font-size:.75rem;border-radius:0;background:transparent;color:#fff}.tg button.on{background:#fff;color:#0b3d5c;font-weight:600}
+.n12s{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px}.n12s svg{min-width:340px}
+.n12x{display:flex;flex-direction:column;gap:3px;margin-top:8px;font-size:.75rem;text-align:left;opacity:.9}.c .n12x span{font-size:.75rem}.n12x b{display:inline;font-size:.75rem;opacity:.85;font-weight:600}
 #ferr{color:#ffb4b4;font-size:.85rem}#ftime{font-size:.75rem;opacity:.7;margin-top:6px}
 </style></head><body><main>
 <h1>Lake Placid (Uihlein Farm) · NYS Mesonet</h1>
 <div id="temp">--°</div><div id="tempc">--°C</div><div id="feels">&nbsp;</div><div id="wbadge" hidden></div>
+<div class="n12hd"><h2><span id="n12h">Next 12 hours</span> · NWS</h2><div id="n12t" class="tg"><button data-n="6">6h</button><button data-n="12" class="on">12h</button></div></div>
+<div class="c chart"><b>Hourly · temp, rain, cloud cover &amp; wind</b><div id="n12"><div class="nod">Loading…</div></div></div>
 <h2>7-day forecast · NWS</h2>
 <div class="c chart"><b>Next 7 days · temp, rain &amp; cloud cover</b><div id="chart"></div></div>
 <div id="days" class="days"></div>
@@ -48,4 +54,4 @@ h2{font-size:1rem;font-weight:600;margin:20px 0 8px;text-align:left;opacity:.9}
 <button id="refresh">↻ Refresh</button>
 <div id="time"></div><div id="err"></div>
 <p><a href="https://www.nysmesonet.org/weather/local#network=nysm&stid=lkpl" target="_blank" rel="noopener">Full Mesonet page →</a></p>
-</main><script src="app.js?v=12"></script><script src="wind.js?v=12"></script><script src="forecast.js?v=12"></script></body></html>
+</main><script src="app.js?v=13"></script><script src="wind.js?v=13"></script><script src="next12.js?v=13"></script><script src="forecast.js?v=13"></script></body></html>
