@@ -1,5 +1,5 @@
 (function(){
-const DEF={lat:44.2416,lon:-73.9835},TTL=30*60*1000,KEY='lpw-fc9';
+const DEF={lat:44.2416,lon:-73.9835},TTL=30*60*1000,KEY='lpw-fc10';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function icon(s,night){s=(s||'').toLowerCase();
@@ -20,7 +20,8 @@ async function getFc(){
  const sk=skyHours(g),gu=gridHours(g,'windGust'),gk=String(g?.properties?.windGust?.uom||'km_h');
  const toMph=v=>v==null?null:/km_h/.test(gk)?v*0.621371:/m_s/.test(gk)?v*2.23694:/kt/.test(gk)?v*1.15078:v;
  const hourly=h.properties.periods.slice(0,168).map(p=>{const t=Date.parse(p.startTime),v=sk[t];return Object.assign(p,{sky:v==null?null:v,gust:toMph(gu[t]??null)});});
- return{at:Date.now(),daily:d.properties.periods,hourly,hasSky:!!g&&Object.keys(sk).length>0};}
+ const gtU=String(g?.properties?.temperature?.uom||'degC'),gtR=gridHours(g,'temperature'),gridT={};for(const k in gtR)if(gtR[k]!=null)gridT[k]=Math.round(/degF/.test(gtU)?gtR[k]:gtR[k]*9/5+32);
+ return{at:Date.now(),daily:d.properties.periods,hourly,gridT,hasSky:!!g&&Object.keys(sk).length>0};}
 function part(p,lbl){if(!p)return`<div class="pt"><div class="pl">${lbl}</div><div class="t">—</div></div>`;
  const pp=p.probabilityOfPrecipitation?.value||0;
  return`<div class="pt"><div class="pl">${esc(p.name)}</div><div class="i">${icon(p.shortForecast,!p.isDaytime)}</div>
@@ -54,7 +55,7 @@ function chart(hr){
  const iM=ts.indexOf(Math.max(...ts)),im=ts.indexOf(Math.min(...ts));
  [[iM,-6],[im,13]].forEach(([i,dy])=>s+=`<text x="${x(i)}" y="${y(ts[i])+dy}" fill="#ffd166" font-size="10" font-weight="700" text-anchor="middle">${ts[i]}°</text>`);
  return`<svg viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd16655"/><stop offset="1" stop-color="#ffd16600"/></linearGradient></defs>${s}</svg>`;}
-function render(fc,stale){try{window.renderSummary&&renderSummary(fc);}catch(e){}window.renderNext12&&renderNext12(fc.hourly);window.renderWindFc&&renderWindFc(fc.hourly);$('days').innerHTML=days(fc.daily);$('chart').innerHTML=chart(fc.hourly)+`<div class="lg"><span><i class="tp"></i>Temp °F</span><span><i class="fz"></i>Freezing</span><span><i class="rn"></i>Rain %</span>${fc.hasSky?'<span><i class="cd"></i>Cloud %</span>':''}</div>`;
+function render(fc,stale){try{window.renderSummary&&renderSummary(fc);}catch(e){}window.renderNext12&&renderNext12(fc.hourly,fc.gridT);window.renderWindFc&&renderWindFc(fc.hourly);$('days').innerHTML=days(fc.daily);$('chart').innerHTML=chart(fc.hourly)+`<div class="lg"><span><i class="tp"></i>Temp °F</span><span><i class="fz"></i>Freezing</span><span><i class="rn"></i>Rain %</span>${fc.hasSky?'<span><i class="cd"></i>Cloud %</span>':''}</div>`;
  $('ftime').textContent='Forecast updated '+new Date(fc.at).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})+' ET'+(stale?' (saved copy)':'');}
 let busy=false;
 window.loadForecast=async function(force){
