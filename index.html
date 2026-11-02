@@ -35,6 +35,10 @@ h2{font-size:1rem;font-weight:600;margin:20px 0 8px;text-align:left;opacity:.9}
 <div class="c chart"><b>Hourly · forecast vs observed temp, rain, cloud cover &amp; wind</b><div id="n12"><div class="nod">Loading…</div></div></div>
 <h2>7-day forecast · NWS</h2>
 <div class="c chart"><b>Next 7 days · temp, rain &amp; cloud cover</b><div id="chart"></div></div>
+<h2>Measured wind, last 24 h</h2>
+<div class="c chart"><b>LKPL 5-minute observations · mph</b><div id="wobs"></div></div><div id="wobserr" class="werr"></div>
+<h2>Wind forecast, 7 days</h2>
+<div class="c chart"><b>NWS hourly speed &amp; gusts · mph</b><div id="wfc"></div></div><div id="wfcnote" class="werr"></div>
 <div id="days" class="days"></div>
 <div id="ferr"></div><div id="ftime"></div>
 <h2>Current conditions</h2>
@@ -44,10 +48,6 @@ h2{font-size:1rem;font-weight:600;margin:20px 0 8px;text-align:left;opacity:.9}
 <div class="c"><b>Precip 6h / 1d</b><span id="p1">--</span></div><div class="c"><b>Precip 3d / 7d</b><span id="p2">--</span></div>
 <div class="c"><b>Snow depth</b><span id="snow">--</span></div><div class="c"><b>Elevation</b><span id="elev">--</span></div>
 </div>
-<h2>Measured wind, last 24 h</h2>
-<div class="c chart"><b>LKPL 5-minute observations · mph</b><div id="wobs"></div></div><div id="wobserr" class="werr"></div>
-<h2>Wind forecast, 7 days</h2>
-<div class="c chart"><b>NWS hourly speed &amp; gusts · mph</b><div id="wfc"></div></div><div id="wfcnote" class="werr"></div>
 <h2>Ground &amp; sky</h2>
 <div class="grid gs">
 <div class="c"><b>Soil temp 2 in</b><span id="ts05">--</span><i id="fz05">--</i></div><div class="c"><b>Soil moisture 2 in</b><span id="sm05">--</span></div>
@@ -59,4 +59,4 @@ h2{font-size:1rem;font-weight:600;margin:20px 0 8px;text-align:left;opacity:.9}
 <button id="refresh">↻ Refresh</button>
 <div id="time"></div><div id="err"></div>
 <p><a href="https://www.nysmesonet.org/weather/local#network=nysm&stid=lkpl" target="_blank" rel="noopener">Full Mesonet page →</a></p>
-</main><script src="app.js?v=18"></script><script src="wind.js?v=18"></script><script src="next12.js?v=18"></script><script src="summary.js?v=18"></script><script src="forecast.js?v=18"></script></body></html>
+</main><script src="app.js?v=19"></script><script src="wind.js?v=19"></script><script src="next12.js?v=19"></script><script src="summary.js?v=19"></script><script src="forecast.js?v=19"></script></body></html>
