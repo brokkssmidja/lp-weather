@@ -16,7 +16,10 @@ const when=t=>new Date(t).toLocaleString('en-US',{timeZone:TZ,weekday:'short',ho
 // Week view is piecewise: the last 24 h (PAST of the width) is stretched
 // about 3× versus the following forecast days, so a phone can still show
 // the measured trace and the week on one line. 48 h view is linear.
-const W=400,H=196,T=16,B=40,L=28,R=30,PAST=0.38;
+// Fixed gutters, wide enough for the widest tick ("100" on the left, "100%" on the right)
+// so both charts share one plot box. Time maps to the same viewBox x, and the SVGs
+// are the same CSS width, so "now" is the same screen x at every viewport.
+const W=400,H=196,T=16,B=40,L=38,R=46,PAST=0.38;
 let mode='week',fcEnd=0,synced=0;
 try{const s=localStorage.getItem('lpw-span');if(s==='48h'||s==='week')mode=s;}catch(e){}
 function syncNow(){synced=Math.floor(Date.now()/60000)*60000;return synced;}
@@ -50,7 +53,10 @@ function ticks(rg){
 }
 function back(rg){
  const xn=xOf(rg.now,rg),yb=H-B;
- return `<rect class="pastshade" x="${L}" y="${T}" width="${(xn-L).toFixed(1)}" height="${yb-T}" fill="rgba(255,255,255,0.10)"/>`;
+ return `<rect class="plotbox" x="${L}" y="${T}" width="${W-L-R}" height="${yb-T}" fill="none"/>`+
+  `<line class="plotL" x1="${L}" x2="${L}" y1="0" y2="${H}" stroke="#fff" stroke-opacity="0" stroke-width="1"/>`+
+  `<line class="plotR" x1="${W-R}" x2="${W-R}" y1="0" y2="${H}" stroke="#fff" stroke-opacity="0" stroke-width="1"/>`+
+  `<rect class="pastshade" x="${L}" y="${T}" width="${(xn-L).toFixed(1)}" height="${yb-T}" fill="rgba(255,255,255,0.10)"/>`;
 }
 function grid(rg){
  const yb=H-B,xn=xOf(rg.now,rg);let s='';
@@ -114,6 +120,7 @@ function setMode(m){
  syncNow();syncChrome();
  window.redrawForecastChart&&window.redrawForecastChart();
  drawWind();
+ window.renderNext12&&window.renderNext12();
 }
 
 let obsPts=null,fcPts=null,obsError='';
@@ -194,7 +201,7 @@ function drawWind(){
  addPeak(pkFc,'forecast',xf,xn+4,W-R-2);
  const aria='Wind on a shared clock from 24 hours ago to the end of the forecast. Solid lines are LKPL measurements left of now; dashed lines are the NWS forecast.'
   +(pkObs?` Measured peak ${Math.round(pkObs.g)} mph.`:'')+(pkFc?` Forecast peak ${Math.round(pkFc.g)} mph.`:'');
- el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">${s}</svg><div class="lg"><span><i class="ws"></i>Speed</span><span><i class="wg"></i>Gust</span><span><i class="fd"></i>Dashed = forecast</span><span><i class="bw"></i>Watch 30+</span><span><i class="ba"></i>Advisory 45+</span><span><i class="bx"></i>Warning 58+</span><span>➤ Direction</span></div>`;
+ el.innerHTML=`<svg class="axis" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMin meet" role="img" aria-label="${aria}">${s}</svg><div class="lg"><span><i class="ws"></i>Speed</span><span><i class="wg"></i>Gust</span><span><i class="fd"></i>Dashed = forecast</span><span><i class="bw"></i>Watch 30+</span><span><i class="ba"></i>Advisory 45+</span><span><i class="bx"></i>Warning 58+</span><span>➤ Direction</span></div>`;
  windNotes();
 }
 window.redrawWind=drawWind;

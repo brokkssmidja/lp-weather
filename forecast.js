@@ -88,7 +88,7 @@ function chart(hr){
  }
  s+=A.front(rg);
  const aria='Temperature, rain and cloud on a shared clock from 24 hours ago through the NWS forecast. Cyan is measured at Uihlein Farm, gold is the forecast, and the dashed line is now.';
- return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}"><defs><linearGradient id="tgf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd16655"/><stop offset="1" stop-color="#ffd16600"/></linearGradient><linearGradient id="tgm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ff2ff40"/><stop offset="1" stop-color="#5ff2ff00"/></linearGradient></defs>${s}</svg>`;}
+ return `<svg class="axis" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMin meet" role="img" aria-label="${aria}"><defs><linearGradient id="tgf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd16655"/><stop offset="1" stop-color="#ffd16600"/></linearGradient><linearGradient id="tgm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ff2ff40"/><stop offset="1" stop-color="#5ff2ff00"/></linearGradient></defs>${s}</svg>`;}
 function legend(fc){const obs=(window.LPTempObs||[]).length;
  return `<div class="lg">${obs?'<span><i class="ob"></i>Measured °F</span>':''}<span><i class="tp"></i>Forecast °F</span><span><i class="fz"></i>Freezing</span><span><i class="rn"></i>Rain %</span>${fc.hasSky?'<span><i class="cd"></i>Cloud %</span>':''}</div>`;}
 function drawChart(fc){const el=$('chart');if(!el||!fc)return;el.innerHTML=chart(fc.hourly)+legend(fc);}
