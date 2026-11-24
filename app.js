@@ -47,6 +47,6 @@ async function load(){
     $('time').textContent='Observed '+new Date(p.TIME).toLocaleString('en-US',{timeZone:'America/New_York',weekday:'short',hour:'numeric',minute:'2-digit',month:'short',day:'numeric'})+' ET';
   }catch(e){$('err').textContent='Could not load: '+e.message;$('time').textContent='';}
 }
-$('refresh').onclick=()=>{load();window.loadForecast&&loadForecast(true);};load();setInterval(load,5*60*1000);
+$('refresh').onclick=()=>{load();window.loadForecast&&loadForecast(true);window.loadWindObs&&loadWindObs();};load();setInterval(load,5*60*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)load();});
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
