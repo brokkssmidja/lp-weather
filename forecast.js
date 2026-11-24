@@ -35,27 +35,69 @@ function days(per){
   const name=k===0?'Today':d.toLocaleString('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric'});
   return`<div class="day"><div class="n">${esc(name)}</div><div class="dn">${part(o.day,'Day')}${part(o.night,'Night')}</div></div>`;}).join('');}
 const pill=(x,y,t,fill,fs,anc,fw)=>{const w=String(t).length*fs*0.6+6,h=fs+4,x0=anc==='end'?x-w+3:anc==='start'?x-3:x-w/2;return`<rect x="${x0.toFixed(1)}" y="${(y-fs*0.82-2).toFixed(1)}" width="${w.toFixed(1)}" height="${h}" rx="3.5" fill="#0b3d5c" fill-opacity=".88"/><text x="${x}" y="${y}" fill="${fill}" font-size="${fs}" font-weight="${fw||700}" text-anchor="${anc||'middle'}">${t}</text>`;};
+let lastFc=null;
 function chart(hr){
- const W=400,H=180,L=26,R=24,T=12,B=26,n=hr.length;if(!n)return'';
- const ts=hr.map(h=>h.temperature),mn=Math.min(Math.floor(Math.min(...ts)/5)*5-2,28),mx=Math.max(Math.ceil(Math.max(...ts)/5)*5+2,36);
- const x=i=>L+i*(W-L-R)/(n-1),y=t=>T+(mx-t)*(H-T-B)/(mx-mn),bw=(W-L-R)/n;let s='';
- for(let t=Math.ceil(mn/5)*5;t<=mx;t+=5)s+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="#ffffff22"/><text x="${L-4}" y="${y(t)+3}" fill="#ffffffaa" font-size="9" text-anchor="end">${t}</text>`;
- s+=`<rect x="${L}" y="${y(32)}" width="${W-L-R}" height="${H-B-y(32)}" fill="rgba(127,216,255,0.12)"/>`;
- const cl=hr.map((h,i)=>h.sky==null?null:`${x(i).toFixed(1)},${(H-B-h.sky/100*(H-T-B)).toFixed(1)}`);
- if(cl.some(v=>v)){let seg=[];const flush=()=>{if(seg.length>1){const i0=seg[0],i1=seg[seg.length-1];s+=`<polygon points="${x(i0)},${H-B} ${seg.map(i=>cl[i]).join(' ')} ${x(i1)},${H-B}" fill="rgba(160,140,200,0.25)"/><polyline points="${seg.map(i=>cl[i]).join(' ')}" fill="none" stroke="#8f78d0" stroke-width="1.5" stroke-dasharray="4 3"/>`;}seg=[];};
-  cl.forEach((v,i)=>v?seg.push(i):flush());flush();}
- hr.forEach((h,i)=>{const p=h.probabilityOfPrecipitation?.value||0;if(p)s+=`<rect x="${x(i)-bw/2}" y="${H-B-p/100*(H-T-B)}" width="${bw}" height="${p/100*(H-T-B)}" fill="#2b7bd6"/>`;
-  const d=new Date(h.startTime),hh=+d.toLocaleString('en-US',{timeZone:'America/New_York',hour:'numeric',hour12:false})%24;
-  if(hh===0){s+=`<line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${H-B}" stroke="#ffffff55" stroke-dasharray="2 3"/><text x="${x(i)+3}" y="${H-B+12}" fill="#fff" font-size="${n>96?9:10}">${d.toLocaleString('en-US',{timeZone:'America/New_York',weekday:'short'})}</text>`;}
-  else if(hh===12&&n<=96||hh%6===0&&n<=72)s+=`<text x="${x(i)}" y="${H-B+22}" fill="#ffffff88" font-size="8" text-anchor="middle">${hh%12||12}${hh<12?'a':'p'}</text>`;});
- [0,50,100].forEach(p=>s+=`<text x="${W-R+3}" y="${H-B-p/100*(H-T-B)+3}" fill="#ffffff88" font-size="8">${p}%</text>`);
- s+=`<line x1="${L}" x2="${W-R}" y1="${y(32)}" y2="${y(32)}" stroke="#7fd8ff" stroke-width="1.2" stroke-dasharray="6 3"/>`+pill(L+4,y(32)+11,'32°F','#7fd8ff',9,'start');
- const pts=hr.map((h,i)=>`${x(i).toFixed(1)},${y(h.temperature).toFixed(1)}`).join(' ');
- s+=`<polygon points="${x(0)},${H-B} ${pts} ${x(n-1)},${H-B}" fill="url(#g)"/><polyline points="${pts}" fill="none" stroke="#ffd166" stroke-width="2.2" stroke-linejoin="round"/>`;
- const iM=ts.indexOf(Math.max(...ts)),im=ts.indexOf(Math.min(...ts));
- [[iM,-6],[im,13]].forEach(([i,dy])=>s+=`<text x="${x(i)}" y="${y(ts[i])+dy}" fill="#ffd166" font-size="10" font-weight="700" text-anchor="middle">${ts[i]}°</text>`);
- return`<svg viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd16655"/><stop offset="1" stop-color="#ffd16600"/></linearGradient></defs>${s}</svg>`;}
-function render(fc,stale){try{window.renderSummary&&renderSummary(fc);}catch(e){}window.renderNext12&&renderNext12(fc.hourly,fc.gridT);window.renderWindFc&&renderWindFc(fc.hourly);$('days').innerHTML=days(fc.daily);$('chart').innerHTML=chart(fc.hourly)+`<div class="lg"><span><i class="tp"></i>Temp °F</span><span><i class="fz"></i>Freezing</span><span><i class="rn"></i>Rain %</span>${fc.hasSky?'<span><i class="cd"></i>Cloud %</span>':''}</div>`;
+ const A=window.LPAxis;if(!A||!hr||!hr.length)return'';
+ const {W,H,T,B,L,R}=A,rg=A.range(),x=t=>A.x(t,rg),yb=H-B,ph=yb-T;
+ const tOf=h=>Date.parse(h.startTime),endOf=h=>h.endTime?Date.parse(h.endTime):tOf(h)+36e5;
+ const fhr=hr.filter(h=>{const t=tOf(h);return isFinite(t)&&endOf(h)>rg.now&&t<rg.t1+36e5;});
+ const obs=(window.LPTempObs||[]).filter(o=>o&&o.t>=rg.t0-6e4&&o.t<=rg.now+6e4&&o.v!=null&&isFinite(o.v));
+ const ts=fhr.map(h=>h.temperature).filter(v=>v!=null&&isFinite(v)).concat(obs.map(o=>o.v));
+ if(!ts.length)return'<div class="nod">No temperature data</div>';
+ const mn=Math.min(Math.floor(Math.min(...ts)/5)*5-2,28),mx=Math.max(Math.ceil(Math.max(...ts)/5)*5+2,36);
+ const y=t=>T+(mx-t)*ph/(mx-mn),xf=t=>x(Math.max(t,rg.now)),xm=t=>x(Math.min(t,rg.now));
+ let s=A.back(rg);
+ const step=(mx-mn)>52?10:5;
+ for(let t=Math.ceil(mn/step)*step;t<=mx;t+=step)s+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="#ffffff22"/><text x="${L-4}" y="${y(t)+3}" fill="#ffffffaa" font-size="9" text-anchor="end">${t}</text>`;
+ s+=A.grid(rg);
+ const y32=y(32);
+ if(y32>T&&y32<yb)s+=`<rect x="${L}" y="${y32}" width="${W-L-R}" height="${yb-y32}" fill="rgba(127,216,255,0.12)"/>`;
+ // cloud, then rain — same stacking as before, forecast hours only
+ if(fhr.some(h=>h.sky!=null)){let seg=[];const flush=()=>{
+  if(seg.length){const pts=seg.map(h=>`${xf(tOf(h)).toFixed(1)},${(yb-h.sky/100*ph).toFixed(1)}`);
+   const x0=+pts[0].split(',')[0],x1=+pts[pts.length-1].split(',')[0];
+   if(x1-x0>0.5)s+=`<polygon points="${x0},${yb} ${pts.join(' ')} ${x1},${yb}" fill="rgba(160,140,200,0.25)"/><polyline points="${pts.join(' ')}" fill="none" stroke="#8f78d0" stroke-width="1.5" stroke-dasharray="4 3"/>`;}
+  seg=[];};
+  fhr.forEach(h=>h.sky==null?flush():seg.push(h));flush();}
+ fhr.forEach(h=>{const p=h.probabilityOfPrecipitation?.value||0;if(!p)return;const t=tOf(h),e=endOf(h);if(e<=rg.now||t>=rg.t1)return;
+  const x0=xf(t),x1=x(Math.min(e,rg.t1));if(x1-x0<0.4)return;const bh=p/100*ph;
+  s+=`<rect x="${x0.toFixed(1)}" y="${(yb-bh).toFixed(1)}" width="${(x1-x0).toFixed(1)}" height="${bh.toFixed(1)}" fill="#2b7bd6"/>`;});
+ if(y32>T&&y32<yb)s+=`<line x1="${L}" x2="${W-R}" y1="${y32}" y2="${y32}" stroke="#7fd8ff" stroke-width="1.2" stroke-dasharray="6 3"/>`+pill(Math.min(W-R-36,L+4),y32+11,'32°F','#7fd8ff',9,'start');
+ [0,50,100].forEach(p=>s+=`<text x="${W-R+3}" y="${yb-p/100*ph+3}" fill="#ffffff88" font-size="8">${p}%</text>`);
+ const fpts=fhr.filter(h=>h.temperature!=null&&isFinite(h.temperature));
+ if(fpts.length){
+  const pts=fpts.map(h=>`${xf(tOf(h)).toFixed(1)},${y(h.temperature).toFixed(1)}`).join(' ');
+  const x0=xf(tOf(fpts[0])),x1=xf(tOf(fpts[fpts.length-1]));
+  s+=`<polygon points="${x0},${yb} ${pts} ${x1},${yb}" fill="url(#tgf)"/><polyline points="${pts}" fill="none" stroke="#ffd166" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const vals=fpts.map(h=>h.temperature),iM=vals.indexOf(Math.max(...vals)),im=vals.indexOf(Math.min(...vals));
+  [[iM,-7],[im,13]].forEach(([i,dy])=>{const h=fpts[i],xx=xf(tOf(h));let yy=y(h.temperature)+dy;
+   if(yy>yb-4)yy=yb-4;if(yy<T+10)yy=T+10;
+   const anc=xx>W-R-18?'end':xx<L+18?'start':'middle';
+   s+=`<text x="${xx.toFixed(1)}" y="${yy.toFixed(1)}" fill="#ffd166" font-size="10" font-weight="700" text-anchor="${anc}">${h.temperature}°</text>`;});
+ }
+ if(obs.length>1){
+  const pts=obs.map(o=>`${xm(o.t).toFixed(1)},${y(o.v).toFixed(1)}`).join(' ');
+  const x0=xm(obs[0].t),x1=xm(obs[obs.length-1].t);
+  s+=`<polygon points="${x0},${yb} ${pts} ${x1},${yb}" fill="url(#tgm)"/>`;
+  s+=`<polyline points="${pts}" fill="none" stroke="#083044" stroke-width="4.2" stroke-linejoin="round" stroke-opacity=".75"/>`;
+  s+=`<polyline points="${pts}" fill="none" stroke="#5ff2ff" stroke-width="2.15" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const lo=obs[obs.length-1],xx=xm(lo.t),yy=y(lo.v);
+  s+=`<circle cx="${xx.toFixed(1)}" cy="${yy.toFixed(1)}" r="2.8" fill="#5ff2ff" stroke="#083044" stroke-width="1"/>`;
+  const below=yy+18<yb-2;
+  s+=pill(xx-3,below?yy+16:yy-8,Math.round(lo.v)+'°','#5ff2ff',9,'end');
+ }
+ s+=A.front(rg);
+ const aria='Temperature, rain and cloud on a shared clock from 24 hours ago through the NWS forecast. Cyan is measured at Uihlein Farm, gold is the forecast, and the dashed line is now.';
+ return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}"><defs><linearGradient id="tgf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd16655"/><stop offset="1" stop-color="#ffd16600"/></linearGradient><linearGradient id="tgm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ff2ff40"/><stop offset="1" stop-color="#5ff2ff00"/></linearGradient></defs>${s}</svg>`;}
+function legend(fc){const obs=(window.LPTempObs||[]).length;
+ return `<div class="lg">${obs?'<span><i class="ob"></i>Measured °F</span>':''}<span><i class="tp"></i>Forecast °F</span><span><i class="fz"></i>Freezing</span><span><i class="rn"></i>Rain %</span>${fc.hasSky?'<span><i class="cd"></i>Cloud %</span>':''}</div>`;}
+function drawChart(fc){const el=$('chart');if(!el||!fc)return;el.innerHTML=chart(fc.hourly)+legend(fc);}
+window.redrawForecastChart=function(){if(lastFc)drawChart(lastFc);};
+function render(fc,stale){lastFc=fc;try{window.renderSummary&&renderSummary(fc);}catch(e){}
+ window.renderNext12&&renderNext12(fc.hourly,fc.gridT);
+ if(window.LPAxis){if(fc.hourly&&fc.hourly.length)LPAxis.setForecastEnd(Date.parse(fc.hourly[fc.hourly.length-1].startTime));LPAxis.syncNow();}
+ window.renderWindFc&&renderWindFc(fc.hourly);
+ $('days').innerHTML=days(fc.daily);drawChart(fc);
  $('ftime').textContent='Forecast updated '+new Date(fc.at).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})+' ET'+(stale?' (saved copy)':'');}
 let busy=false;
 window.loadForecast=async function(force){
